@@ -108,8 +108,8 @@ class MyGame(arcade.Window):
                 """
 
                 #Load Sounds
-                self.firefury = arcade.load_sound("Sounds/Firefury.wav")
-                self.SpellChange = arcade.load_sound("Sounds/SpellChange.wav")
+                self.firefury = arcade.load_sound("sounds/Firefury.wav")
+                self.SpellChange = arcade.load_sound("sounds/SpellChange.wav")
                 
                 self.set_mouse_visible(False)
                 
