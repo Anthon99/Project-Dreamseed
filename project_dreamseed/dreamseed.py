@@ -133,6 +133,7 @@ class MyGame(arcade.Window):
 				self.enem_shambler_list = arcade.SpriteList()
 				self.base_list = arcade.SpriteList()
 				self.gui_list = arcade.SpriteList()
+				self.player_list = arcade.SpriteList()
 				
 				#number of shamblers to spawn on this setup
 				self.enem_pool_shambler = 20
@@ -148,6 +149,11 @@ class MyGame(arcade.Window):
 				tree.center_x = 300
 				tree.center_y = 300
 				self.gui_list.append(tree)
+
+				self.player_sprite = arcade.Sprite("images/player/player.png", CHARACTER_SCALING)
+				self.player_sprite.centre_x = 400
+				self.player_sprite.center_y = 300
+				self.player_list.append(self.player_sprite)
 				
 				
 
@@ -178,8 +184,25 @@ class MyGame(arcade.Window):
 				self.base_list.draw()
 				self.enem_list.draw()
 				self.enem_shambler_list.draw()
+				self.player_list.draw()
 
-		
+		def on_key_press(self, key, modifiers):
+			"""called whenever a key is pressed. """
+
+			if key == arcade.key.UP or key == arcade.key.W:
+				self.player_sprite.change_y = PLAYER_MOVEMENT_SPEED
+			elif key == arcade.key.DOWN or key == arcade.key.S:
+				self.player_sprite.change_y = -PLAYER_MOVEMENT_SPEED
+
+		def on_key_release(self, key, modifiers):
+			"""Called when the user releases a key. """
+
+			if key == arcade.key.UP or key == arcade.key.W:
+				self.player_sprite.change_y = 5
+			elif key == arcade.key.DOWN or key == arcade.key.S:
+				self.player_sprite.change_y = 5
+
+
 
 		def update(self, delta_time):
 				"""
@@ -196,6 +219,7 @@ class MyGame(arcade.Window):
 				self.gui_list.update()
 				self.enem_list.update()
 				self.enem_shambler_list.update()
+				self.player_sprite.update()
 				
 				#logic for spells
 				for firefury in self.spell_firefury_list:
