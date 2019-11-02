@@ -289,7 +289,7 @@ class MyGame(arcade.Window):
 
         # code to generate a pool of enemies
 
-        if self.enem_pool_shambler > 0 and self.enem_gap_shambler < 0:
+        if self.enem_pool_shambler > 0 and self.enem_gap_shambler < 0 and self.menuCounter == 2:
             shambler = arcade.Sprite("images/enemies/enemy_shambler.png")
             shambler.center_x = 1800
             shambler.center_y = random.randint(50, 300)
