@@ -126,6 +126,10 @@ class MyGame(arcade.Window):
 				
 				self.tree = None
 				
+				#set up score and 'money' variables
+				self.score_earned = 0
+				self.score_current = 0
+				
 				#base variables
 				self.health_value =100
 				self.stop_x = 700
