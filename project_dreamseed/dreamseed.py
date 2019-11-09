@@ -32,6 +32,63 @@ WATERSPEED = 15
 LIGHTNINGSPEED = 50
 
 
+class Menu:
+    def __init__(self):
+        self.gui_list = None
+        self.cursor_sprite = None
+
+        # Menu Sprite list
+        self.menu_list1 = None
+        self.menu_list2 = None
+        self.menu_background = None
+
+
+def setup_menu_1():
+    menu = Menu()
+
+    menu.gui_list = arcade.SpriteList()
+    menu.menu_list1 = arcade.SpriteList()
+    menu.menu_list2 = arcade.SpriteList()
+    menu.menu_background = arcade.SpriteList()
+
+    cursor_sprite = arcade.Sprite("images/cursor/cursor1.png", CHARACTER_SCALING)
+    cursor_sprite.center_x = 100
+    cursor_sprite.center_y = 200
+    menu.gui_list.append(cursor_sprite)
+
+    back_drop = arcade.Sprite("images/menu icons/MenuBackdrop.png", 1)
+    back_drop.center_x = 800
+    back_drop.center_y = 400
+    menu.menu_background.append(back_drop)
+
+    backg_Wizard = arcade.Sprite("images/menu icons/Wizard.png", 3)
+    backg_Wizard.center_x = 1300
+    backg_Wizard.center_y = 200
+    menu.menu_background.append(backg_Wizard)
+
+    start_icon = arcade.Sprite("images/menu icons/Start.png", 1)
+    start_icon.center_x = 800
+    start_icon.center_y = 400
+    menu.menu_list1.append(start_icon)
+
+    easy_icon = arcade.Sprite("images/menu icons/Easy.png", 1)
+    easy_icon.center_x = 800
+    easy_icon.center_y = 525
+    menu.menu_list2.append(easy_icon)
+
+    normal_icon = arcade.Sprite("images/menu icons/Normal.png", 1)
+    normal_icon.center_x = 800
+    normal_icon.center_y = 400
+    menu.menu_list2.append(normal_icon)
+
+    hard_icon = arcade.Sprite("images/menu icons/Hard.png", 1)
+    hard_icon.center_x = 800
+    hard_icon.center_y = 275
+    menu.menu_list2.append(hard_icon)
+
+    return menu
+
+
 # class to store variables for drawing the magic pool
 class Magic:
     def __init__(self):
@@ -44,6 +101,18 @@ class Magic:
         self.f_angle = 0
         self.tilt = 0
         self.sections = 0
+
+
+# setting up a health pool
+
+class Health:
+    def __init__(self):
+        self.x = 0
+        self.y = 0
+        self.width = 0
+        self.max = 0
+        self.value = 0
+        self.color = 0
 
 
 # Section for building functions
@@ -63,19 +132,37 @@ def make_magic():
     return magic
 
 
+# function to display the health pool
+def make_health():
+    health = Health()
+    health.x = 800
+    health.y = 700
+    health.width = 40
+    health.max = 100
+    health.color = arcade.color.DARK_SPRING_GREEN
+
+    return health
+
+
 class MyGame(arcade.Window):
     """
-    Main application class.
+        Main application class.
 
-    NOTE: Go ahead and delete the methods you don't need.
-    If you do need a method, delete the 'pass' and replace it
-    with your own code. Don't leave 'pass' in this program.
-    """
+        NOTE: Go ahead and delete the methods you don't need.
+        If you do need a method, delete the 'pass' and replace it
+        with your own code. Don't leave 'pass' in this program.
+        """
 
     def __init__(self):
         super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
 
         # sprite lists live here, using individual lists so that when we do collision checking different spells can do different things to different enemies if we want.
+
+        self.main_menu_open = True
+        self.difficulty_menu_open = False
+
+        self.current_menu = 0
+        self.menus = None
 
         self.spell_list = None
         self.spell_firefury_list = None
@@ -87,11 +174,7 @@ class MyGame(arcade.Window):
         self.gui_list = None
         self.cursor_sprite = None
         self.magic_list = []
-        self.menu_list1 = None
-        self.menu_list2 = None
-        self.menu_background = None
-        self.game_background = None
-        self.menuCounter = 0
+        self.health_list = []
 
         self.firefury_damage = 50
         self.waterblast_damage = 5
@@ -100,7 +183,19 @@ class MyGame(arcade.Window):
         magic = make_magic()
         self.magic_list.append(magic)
 
+        health = make_health()
+        self.health_list.append(health)
+
         self.tree = None
+
+        # set up score and 'money' variables
+        self.score_earned = 0
+        self.score_current = 0
+
+        # base variables
+        self.health_value = 100
+        self.stop_x = 700
+        self.kill_timer = 0
 
         # load spell casting variables
         self.selected_spell = 1
@@ -112,9 +207,13 @@ class MyGame(arcade.Window):
         self.firefury_cost = 0.07
         self.waterblast_cost = 0.7
         self.lightning_cost = 1.00
+
+        # variables to determine what upgrades the player has unlocked
+        self.wall_level = 0
+        self.spikes_level = 0
         """
-        This part is to set the variable settings for what is open 
-        """
+                This part is to set the variable settings for what is open 
+                """
 
         # Load Sounds
         self.firefury = arcade.load_sound("sounds/Firefury.wav")
@@ -124,6 +223,7 @@ class MyGame(arcade.Window):
 
     def setup(self):
         # Create your sprites and sprite lists here
+
         self.spell_list = arcade.SpriteList()
         self.spell_firefury_list = arcade.SpriteList()
         self.spell_waterblast_list = arcade.SpriteList()
@@ -133,9 +233,6 @@ class MyGame(arcade.Window):
         self.enem_shambler_list = arcade.SpriteList()
         self.base_list = arcade.SpriteList()
         self.gui_list = arcade.SpriteList()
-        self.game_background = arcade.SpriteList()
-
-
 
         # number of shamblers to spawn on this setup
         self.enem_pool_shambler = 20
@@ -147,46 +244,28 @@ class MyGame(arcade.Window):
         self.cursor_sprite.center_y = 200
         self.gui_list.append(self.cursor_sprite)
 
-        self.menu_list1 = arcade.SpriteList()
-        self.menu_list2 = arcade.SpriteList()
-        self.menu_background = arcade.SpriteList()
-
         tree = arcade.Sprite("images/tree/tree1.png", TILE_SCALING)
         tree.center_x = 300
         tree.center_y = 300
-        self.game_background.append(tree)
+        self.base_list.append(tree)
 
-        self.back_drop = arcade.Sprite("images/menu icons/MenuBackdrop.png", 1)
-        self.back_drop.center_x = 800
-        self.back_drop.center_y = 400
-        self.menu_background.append(self.back_drop)
+        # if (self.wall_level == 0):
+        wall = arcade.Sprite("images/tree/wooden.png", TILE_SCALING)
+        wall.center_x = 600
+        wall.center_y = 200
+        self.base_list.append(wall)
 
-        self.backg_Wizard = arcade.Sprite("images/menu icons/Wizard.png", 3)
-        self.backg_Wizard.center_x = 1300
-        self.backg_Wizard.center_y = 200
-        self.menu_background.append(self.backg_Wizard)
+        self.menus = []
 
-        self.start_icon = arcade.Sprite("images/menu icons/Start.png", 1)
-        self.start_icon.center_x = 800
-        self.start_icon.center_y = 400
-        self.menu_list1.append(self.start_icon)
+        menu = setup_menu_1()
+        self.menus.append(menu)
 
-        self.easy_icon = arcade.Sprite("images/menu icons/Easy.png", 1)
-        self.easy_icon.center_x = 800
-        self.easy_icon.center_y = 525
-
-        self.normal_icon = arcade.Sprite("images/menu icons/Normal.png", 1)
-        self.normal_icon.center_x = 800
-        self.normal_icon.center_y = 400
-
-        self.hard_icon = arcade.Sprite("images/menu icons/Hard.png", 1)
-        self.hard_icon.center_x = 800
-        self.hard_icon.center_y = 275
+        self.current_menu = 0
 
     def on_draw(self):
         """
-        Render the screen.
-        """
+                Render the screen.
+                """
 
         # This command should happen before we start drawing. It will clear
         # the screen to the background color, and erase what we drew last frame.
@@ -203,9 +282,12 @@ class MyGame(arcade.Window):
             arcade.draw_arc_filled(magic.x, magic.y, magic.width, magic.height, magic.color, magic.s_angle,
                                    (360 * self.magic_resource_percentage), magic.tilt, magic.sections)
             arcade.draw_circle_outline(magic.x, magic.y, magic.height, arcade.color.REGALIA, 5, 128)
+
+        if self.kill_timer > 1:
+            arcade.draw_text("YOU HAVE FAILED", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, arcade.color.CRIMSON_GLORY, 40)
+
         # Call draw() on all your sprite lists below
 
-        self.game_background.draw()
         self.spell_list.draw()
         self.spell_firefury_list.draw()
         self.spell_waterblast_list.draw()
@@ -213,94 +295,127 @@ class MyGame(arcade.Window):
         self.base_list.draw()
         self.enem_list.draw()
         self.enem_shambler_list.draw()
-        self.menu_background.draw()
-        self.menu_list1.draw()
-        self.menu_list2.draw()
+
+        # draw health bar
+
+        for health in self.health_list:
+            arcade.draw_lrtb_rectangle_filled(1200, 1200 + self.health_value, 700 + health.width, 700,
+                                              arcade.color.CAMEO_PINK)
+            arcade.draw_lrtb_rectangle_outline(1200, (1200 + health.max), 700 + health.width, 700,
+                                               arcade.color.CANARY_YELLOW, 5)
+
+        if self.main_menu_open:
+            self.menus[self.current_menu].menu_background.draw()
+            self.menus[self.current_menu].menu_list1.draw()
+            self.menus[self.current_menu].gui_list.draw()
+
+        elif self.difficulty_menu_open:
+            self.menus[self.current_menu].menu_background.draw()
+            self.menus[self.current_menu].menu_list2.draw()
+
         self.gui_list.draw()
 
     def update(self, delta_time):
         """
-        All the logic to move, and the game logic goes here.
-        Normally, you'll call update() on the sprite lists that
-        need it.
-        """
+                All the logic to move, and the game logic goes here.
+                Normally, you'll call update() on the sprite lists that
+                need it.
+                """
+        if not self.main_menu_open and not self.difficulty_menu_open:
+            # update sprite lists
+            self.spell_list.update()
+            self.spell_firefury_list.update()
+            self.spell_waterblast_list.update()
+            self.spell_lightning_list.update()
+            self.gui_list.update()
+            self.enem_list.update()
+            self.enem_shambler_list.update()
 
-        # update sprite lists
-        self.spell_list.update()
-        self.spell_firefury_list.update()
-        self.spell_waterblast_list.update()
-        self.spell_lightning_list.update()
-        self.gui_list.update()
-        self.enem_list.update()
-        self.enem_shambler_list.update()
+            # logic for spells
+            for firefury in self.spell_firefury_list:
+                if firefury.bottom > self.height or firefury.top < 0 or firefury.right < 0 or firefury.left > self.width:
+                    firefury.kill()
 
-        # logic for spells
-        for firefury in self.spell_firefury_list:
-            if firefury.bottom > self.height or firefury.top < 0 or firefury.right < 0 or firefury.left > self.width:
-                firefury.kill()
+            for waterblast in self.spell_waterblast_list:
+                if waterblast.bottom > self.height or waterblast.top < 0 or waterblast.right < 0 or waterblast.left > self.width:
+                    waterblast.kill()
 
-        for waterblast in self.spell_waterblast_list:
-            if waterblast.bottom > self.height or waterblast.top < 0 or waterblast.right < 0 or waterblast.left > self.width:
-                waterblast.kill()
+            for lightning in self.spell_lightning_list:
+                if lightning.top < 0 or lightning.right < 0 or lightning.left > self.width:
+                    lightning.kill()
 
-        for lightning in self.spell_lightning_list:
-            if lightning.top < 0 or lightning.right < 0 or lightning.left > self.width:
-                lightning.kill()
+            # logic for enemies
 
-        # logic for enemies
+            for shambler in self.enem_shambler_list:
+                if shambler.bottom > self.width or shambler.top < 0 or shambler.right < 0:
+                    print(shambler.health)
+                    shambler.kill()
+                    print("Shambler deleted")
+                # if the unit runs out of health, kill it
+                if shambler.health < 0:
+                    shambler.kill()
+                    print("Shambler DESTROYED")
 
-        for shambler in self.enem_shambler_list:
-            if shambler.bottom > self.width or shambler.top < 0 or shambler.right < 0:
-                print(shambler.health)
-                shambler.kill()
-                print("Shambler deleted")
-            # if the unit runs out of health, kill it
-            if shambler.health < 0:
-                shambler.kill()
-                print("Shambler DESTROYED")
+                if shambler.center_x < 700:
+                    shambler.change_x = 0
 
-            # Make hit lists
-            shambler_fire_hit_list = arcade.check_for_collision_with_list(shambler, self.spell_firefury_list)
-            shambler_water_hit_list = arcade.check_for_collision_with_list(shambler, self.spell_waterblast_list)
-            shambler_lightning_hit_list = arcade.check_for_collision_with_list(shambler, self.spell_lightning_list)
+                if shambler.attack_timer <= 0 and shambler.change_x == 0:
+                    self.health_value -= 1
+                    shambler.attack_timer = 90
+                # Make hit lists
+                shambler_fire_hit_list = arcade.check_for_collision_with_list(shambler, self.spell_firefury_list)
+                shambler_water_hit_list = arcade.check_for_collision_with_list(shambler, self.spell_waterblast_list)
+                shambler_lightning_hit_list = arcade.check_for_collision_with_list(shambler, self.spell_lightning_list)
 
-            if len(shambler_fire_hit_list) > 0:
-                shambler.health -= self.firefury_damage
+                if len(shambler_fire_hit_list) > 0:
+                    shambler.health -= self.firefury_damage
 
-            for firefury in shambler_fire_hit_list:
-                firefury.remove_from_sprite_lists()
+                for firefury in shambler_fire_hit_list:
+                    firefury.remove_from_sprite_lists()
 
-            if len(shambler_water_hit_list) > 0:
-                shambler.health -= self.waterblast_damage
+                if len(shambler_water_hit_list) > 0:
+                    shambler.health -= self.waterblast_damage
 
-            for waterblast in shambler_water_hit_list:
-                waterblast.remove_from_sprite_lists()
+                for waterblast in shambler_water_hit_list:
+                    waterblast.remove_from_sprite_lists()
 
-            if len(shambler_lightning_hit_list) > 0:
-                shambler.health -= self.lightning_damage
+                if len(shambler_lightning_hit_list) > 0:
+                    shambler.health -= self.lightning_damage
 
-            for lightning in shambler_lightning_hit_list:
-                lightning.remove_from_sprite_lists()
+                for lightning in shambler_lightning_hit_list:
+                    lightning.remove_from_sprite_lists()
 
-        # update magic resource bar
+                # manage the attack timing counter
+                shambler.attack_timer -= 1
 
-        if self.magic_resource_percentage < 1:
-            self.magic_resource_percentage = (self.magic_resource_percentage + (self.magic_resource_replenish / 60))
+            # update magic resource bar
 
-        # code to generate a pool of enemies
+            if self.magic_resource_percentage < 1:
+                self.magic_resource_percentage = (self.magic_resource_percentage + (self.magic_resource_replenish / 60))
 
-        if self.enem_pool_shambler > 0 and self.enem_gap_shambler < 0 and self.menuCounter == 2:
-            shambler = arcade.Sprite("images/enemies/enemy_shambler.png")
-            shambler.center_x = 1800
-            shambler.center_y = random.randint(50, 300)
-            shambler.change_x = random.randint(-4, -1)
-            shambler.health = random.randint(10, 50)
-            self.enem_shambler_list.append(shambler)
-            self.enem_pool_shambler -= 1
-            self.enem_gap_shambler = random.randint(30, 180)
+            # code to generate a pool of enemies
 
-        # code for handling timing variables.
-        self.enem_gap_shambler -= 1
+            if self.enem_pool_shambler > 0 and self.enem_gap_shambler < 0:
+                shambler = arcade.Sprite("images/enemies/enemy_shambler.png")
+                shambler.center_x = 1800
+                shambler.center_y = random.randint(50, 300)
+                shambler.change_x = random.randint(-4, -1)
+                shambler.health = random.randint(10, 50)
+                shambler.attack_timer = 90
+                self.enem_shambler_list.append(shambler)
+                self.enem_pool_shambler -= 1
+                self.enem_gap_shambler = random.randint(30, 180)
+
+            # code for handling timing variables.
+            self.enem_gap_shambler -= 1
+
+            # lose game condition
+
+            if self.health_value < 0:
+                self.kill_timer += 1
+
+            if self.kill_timer > 180:
+                arcade.close_window()
 
     def on_key_press(self, key, key_modifiers):
 
@@ -322,42 +437,34 @@ class MyGame(arcade.Window):
 
     def on_key_release(self, key, key_modifiers):
         """
-        Called whenever the user lets off a previously pressed key.
-        """
+                Called whenever the user lets off a previously pressed key.
+                """
         pass
 
     def on_mouse_motion(self, x, y, delta_x, delta_y):
         """
-        Called whenever the mouse moves.
-        """
+                Called whenever the mouse moves.
+                """
         # Move the center of the player sprite to match the mouse x, y
         self.cursor_sprite.center_x = x
         self.cursor_sprite.center_y = y
 
     def on_mouse_press(self, x, y, button, key_modifiers):
         """
-        Called when the user presses a mouse button.
-        """
-        if 1000 > x > 600 and 450 > y > 350 and self.menuCounter == 0:
-            self.start_icon.remove_from_sprite_lists()
-            self.menu_list2.append(self.easy_icon)
-            self.menu_list2.append(self.normal_icon)
-            self.menu_list2.append(self.hard_icon)
-            self.menuCounter = 1
+                Called when the user presses a mouse button.
+                """
+        if self.main_menu_open:
+            if 1000 > x > 600 and 450 > y > 350:
+                self.main_menu_open = False
+                self.difficulty_menu_open = True
 
-            # sys.exit("Thanks for playing!")
-        elif 1000 > x > 600 and 450 > y > 350 and self.menuCounter == 1:
-            self.easy_icon.remove_from_sprite_lists()
-            self.normal_icon.remove_from_sprite_lists()
-            self.hard_icon.remove_from_sprite_lists()
-            self.back_drop.remove_from_sprite_lists()
-            self.backg_Wizard.remove_from_sprite_lists()
-            self.menuCounter = 2
+        elif self.difficulty_menu_open:
+            if 1000 > x > 600 and 450 > y > 350:
+                self.difficulty_menu_open = False
 
         # check selected spell and draw spell at caster location
-        if (self.selected_spell == 1) and (
-                self.magic_resource_percentage > (self.magic_resource_spend_modifer * self.firefury_cost)
-                and self.menuCounter == 2):
+        elif (self.selected_spell == 1) and (
+                self.magic_resource_percentage > (self.magic_resource_spend_modifer * self.firefury_cost)):
             firefury = arcade.Sprite("images/spells/spell_firefury1.png", CHARACTER_SCALING)
             firefury.center_x = SPELL_CAST_X
             firefury.center_y = SPELL_CAST_Y
@@ -426,8 +533,8 @@ class MyGame(arcade.Window):
 
     def on_mouse_release(self, x, y, button, key_modifiers):
         """
-        Called when a user releases a mouse button.
-        """
+                Called when a user releases a mouse button.
+                """
         pass
 
 
