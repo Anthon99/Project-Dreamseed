@@ -161,7 +161,6 @@ class MyGame(arcade.Window):
         self.main_menu_open = True
         self.difficulty_menu_open = False
 
-        self.current_menu = 0
         self.menus = None
 
         self.spell_list = None
@@ -260,8 +259,6 @@ class MyGame(arcade.Window):
         menu = setup_menu_1()
         self.menus.append(menu)
 
-        self.current_menu = 0
-
     def on_draw(self):
         """
                 Render the screen.
@@ -305,13 +302,13 @@ class MyGame(arcade.Window):
                                                arcade.color.CANARY_YELLOW, 5)
 
         if self.main_menu_open:
-            self.menus[self.current_menu].menu_background.draw()
-            self.menus[self.current_menu].menu_list1.draw()
-            self.menus[self.current_menu].gui_list.draw()
+            self.menus[0].menu_background.draw()
+            self.menus[0].menu_list1.draw()
+            self.menus[0].gui_list.draw()
 
         elif self.difficulty_menu_open:
-            self.menus[self.current_menu].menu_background.draw()
-            self.menus[self.current_menu].menu_list2.draw()
+            self.menus[0].menu_background.draw()
+            self.menus[0].menu_list2.draw()
 
         self.gui_list.draw()
 
