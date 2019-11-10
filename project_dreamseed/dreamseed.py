@@ -34,10 +34,7 @@ LIGHTNINGSPEED = 50
 
 class Menu:
     def __init__(self):
-        self.gui_list = None
-        self.cursor_sprite = None
-
-        # Menu Sprite list
+        # Main menu Sprite lists
         self.menu_list1 = None
         self.menu_list2 = None
         self.menu_background = None
@@ -46,15 +43,10 @@ class Menu:
 def setup_menu_1():
     menu = Menu()
 
-    menu.gui_list = arcade.SpriteList()
+    # Appending main menu sprites to lists
     menu.menu_list1 = arcade.SpriteList()
     menu.menu_list2 = arcade.SpriteList()
     menu.menu_background = arcade.SpriteList()
-
-    cursor_sprite = arcade.Sprite("images/cursor/cursor1.png", CHARACTER_SCALING)
-    cursor_sprite.center_x = 100
-    cursor_sprite.center_y = 200
-    menu.gui_list.append(cursor_sprite)
 
     back_drop = arcade.Sprite("images/menu icons/MenuBackdrop.png", 1)
     back_drop.center_x = 800
@@ -156,13 +148,14 @@ class MyGame(arcade.Window):
     def __init__(self):
         super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
 
-        # sprite lists live here, using individual lists so that when we do collision checking different spells can do different things to different enemies if we want.
-
+        # Variables to determine which screens open at what time.
         self.main_menu_open = True
         self.difficulty_menu_open = False
 
         self.menus = None
 
+        # sprite lists live here, using individual lists so that when we do collision checking different spells can
+        # do different things to different enemies if we want.
         self.spell_list = None
         self.spell_firefury_list = None
         self.spell_waterblast_list = None
@@ -254,8 +247,8 @@ class MyGame(arcade.Window):
         wall.center_y = 200
         self.base_list.append(wall)
 
+        # Declaring menu array and appending Menu object to it.
         self.menus = []
-
         menu = setup_menu_1()
         self.menus.append(menu)
 
@@ -301,10 +294,11 @@ class MyGame(arcade.Window):
             arcade.draw_lrtb_rectangle_outline(1200, (1200 + health.max), 700 + health.width, 700,
                                                arcade.color.CANARY_YELLOW, 5)
 
+        # Draw main menu
         if self.main_menu_open:
             self.menus[0].menu_background.draw()
             self.menus[0].menu_list1.draw()
-            self.menus[0].gui_list.draw()
+            # self.menus[0].gui_list.draw()
 
         elif self.difficulty_menu_open:
             self.menus[0].menu_background.draw()
@@ -450,6 +444,8 @@ class MyGame(arcade.Window):
         """
                 Called when the user presses a mouse button.
                 """
+
+        # Navigating main menu
         if self.main_menu_open:
             if 1000 > x > 600 and 450 > y > 350:
                 self.main_menu_open = False
