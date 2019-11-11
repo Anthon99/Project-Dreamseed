@@ -32,6 +32,39 @@ WATERSPEED = 15
 LIGHTNINGSPEED = 50
 
 
+class UpgradeMenu:
+
+    def __init__(self):
+        # Upgrade menu sprite list
+        self.background_list = None
+        self.menu_list = None
+
+
+def setup_upgrade_menu():
+    upgrade_menu = UpgradeMenu()
+
+    # Appending upgrade menu sprites to lists
+    upgrade_menu.background_list = arcade.SpriteList()
+    upgrade_menu.menu_list = arcade.SpriteList()
+
+    back_drop = arcade.Sprite("images/menu icons/MenuBackdrop.png", 1)
+    back_drop.center_x = 800
+    back_drop.center_y = 400
+    upgrade_menu.background_list.append(back_drop)
+
+    upgrade_text = arcade.Sprite("images/menu icons/Upgrade Text.png", 1)
+    upgrade_text.center_x = 800
+    upgrade_text.center_y = 400
+    upgrade_menu.background_list.append(upgrade_text)
+
+    next_icon = arcade.Sprite("images/menu icons/Next Round.png", 1)
+    next_icon.center_x = 1300
+    next_icon.center_y = 100
+    upgrade_menu.menu_list.append(next_icon)
+
+    return upgrade_menu
+
+
 class Menu:
     def __init__(self):
         # Main menu Sprite lists
@@ -151,8 +184,10 @@ class MyGame(arcade.Window):
         # Variables to determine which screens open at what time.
         self.main_menu_open = True
         self.difficulty_menu_open = False
+        self.upgrade_menu_open = False
 
         self.menus = None
+        self.upgrade_menus = None
 
         # sprite lists live here, using individual lists so that when we do collision checking different spells can
         # do different things to different enemies if we want.
@@ -252,6 +287,11 @@ class MyGame(arcade.Window):
         menu = setup_menu_1()
         self.menus.append(menu)
 
+        # Declaring upgrade menu array and appending Menu object to it.
+        self.upgrade_menus = []
+        upgrade_menu = setup_upgrade_menu()
+        self.upgrade_menus.append(upgrade_menu)
+
     def on_draw(self):
         """
                 Render the screen.
@@ -298,11 +338,14 @@ class MyGame(arcade.Window):
         if self.main_menu_open:
             self.menus[0].menu_background.draw()
             self.menus[0].menu_list1.draw()
-            # self.menus[0].gui_list.draw()
 
         elif self.difficulty_menu_open:
             self.menus[0].menu_background.draw()
             self.menus[0].menu_list2.draw()
+
+        elif self.upgrade_menu_open:
+            self.upgrade_menus[0].background_list.draw()
+            self.upgrade_menus[0].menu_list.draw()
 
         self.gui_list.draw()
 
@@ -312,6 +355,9 @@ class MyGame(arcade.Window):
                 Normally, you'll call update() on the sprite lists that
                 need it.
                 """
+        # if self.upgrade_menu_open:
+        # UpgradeMenu.up_back_x += 300 * delta_time
+
         if not self.main_menu_open and not self.difficulty_menu_open:
             # update sprite lists
             self.spell_list.update()
@@ -321,6 +367,7 @@ class MyGame(arcade.Window):
             self.gui_list.update()
             self.enem_list.update()
             self.enem_shambler_list.update()
+            setup_upgrade_menu().menu_list.update()
 
             # logic for spells
             for firefury in self.spell_firefury_list:
@@ -409,6 +456,12 @@ class MyGame(arcade.Window):
                 arcade.close_window()
 
     def on_key_press(self, key, key_modifiers):
+
+        if key == arcade.key.LEFT:
+            self.upgrade_menu_open = True
+
+        if key == arcade.key.RIGHT:
+            self.upgrade_menu_open = False
 
         if key == (arcade.key.KEY_1 or arcade.key.NUM_1):
             self.selected_spell = 1
