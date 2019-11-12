@@ -36,6 +36,9 @@ class UpgradeMenu:
 
     def __init__(self):
         # Upgrade menu sprite list
+        self.fire_icon_1 = None
+        self.active_fire_icon_1 = None
+        self.upgrade_menu = None
         self.background_list = None
         self.menu_list = None
 
@@ -61,6 +64,15 @@ def setup_upgrade_menu():
     next_icon.center_x = 1300
     next_icon.center_y = 100
     upgrade_menu.menu_list.append(next_icon)
+
+    fire_icon_1 = arcade.Sprite("images/place holders/Non-active fire 1.png", 1)
+    fire_icon_1.center_x = 100
+    fire_icon_1.center_y = 650
+    upgrade_menu.menu_list.append(fire_icon_1)
+
+    active_fire_icon_1 = arcade.Sprite("images/place holders/Active fire 1.png", 1)
+    active_fire_icon_1.center_x = 100
+    active_fire_icon_1.center_y = 650
 
     return upgrade_menu
 
@@ -185,6 +197,7 @@ class MyGame(arcade.Window):
         self.main_menu_open = True
         self.difficulty_menu_open = False
         self.upgrade_menu_open = False
+        self.fire_upgrade_1 = False
 
         self.menus = None
         self.upgrade_menus = None
@@ -288,6 +301,7 @@ class MyGame(arcade.Window):
         self.menus.append(menu)
 
         # Declaring upgrade menu array and appending Menu object to it.
+        
         self.upgrade_menus = []
         upgrade_menu = setup_upgrade_menu()
         self.upgrade_menus.append(upgrade_menu)
@@ -355,8 +369,6 @@ class MyGame(arcade.Window):
                 Normally, you'll call update() on the sprite lists that
                 need it.
                 """
-        # if self.upgrade_menu_open:
-        # UpgradeMenu.up_back_x += 300 * delta_time
 
         if not self.main_menu_open and not self.difficulty_menu_open:
             # update sprite lists
@@ -507,6 +519,13 @@ class MyGame(arcade.Window):
         elif self.difficulty_menu_open:
             if 1000 > x > 600 and 450 > y > 350:
                 self.difficulty_menu_open = False
+
+        elif self.upgrade_menu_open:
+            if 125 > x > 75 and 675 > y > 625:
+                self.fire_upgrade_1 = True
+                print("fire 1 selected")
+                print(self.fire_upgrade_1)
+                setup_upgrade_menu().upgrade_menu.menu_list.append(setup_upgrade_menu().fire_icon_1)
 
         # check selected spell and draw spell at caster location
         elif (self.selected_spell == 1) and (
