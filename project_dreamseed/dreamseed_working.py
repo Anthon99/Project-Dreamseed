@@ -24,13 +24,16 @@ MOB_SCALING = 0.5
 
 #spell casting globals
 
-SPELL_CAST_X = 200
-SPELL_CAST_Y = 400
+
+
 
 FIRESPEED = 5
 WATERSPEED = 15
 LIGHTNINGSPEED = 50
 
+CHARACTER_POS1 = 100
+CHARACTER_POS2 = 250
+CHARACTER_POS3 = 400
 
 
 
@@ -46,6 +49,8 @@ class Magic:
 				self.f_angle = 0
 				self.tilt = 0
 				self.sections = 0
+				self.max = 0
+				self.current = 0
 				
 #setting up a health pool
 
@@ -73,6 +78,8 @@ def make_magic():
 		magic.f_angle = 160
 		magic.tilt = 0
 		magic.sections = 300
+		magic.max = 100
+		
 		return magic
 
 #function to display the health pool
@@ -110,6 +117,7 @@ class MyGame(arcade.Window):
 				self.base_list = None
 				self.gui_list = None
 				self.cursor_sprite = None
+				self.player_list = None
 				self.magic_list = []
 				self.health_list = []
 				
@@ -126,6 +134,12 @@ class MyGame(arcade.Window):
 				
 				self.tree = None
 				
+				#setting variable to track the players position for shooting. This is a bit of a hack and slash way of doing it :(
+				self.player_shoot_x = 0
+				self.player_shoot_y = 0
+				
+				
+				
 				#set up score and 'money' variables
 				self.score_earned = 0
 				self.score_current = 0
@@ -138,7 +152,7 @@ class MyGame(arcade.Window):
 				#load spell casting variables
 				self.selected_spell = 1
 				self.magic_resource_percentage = 0.5
-				self.magic_resource_replenish = 1
+				self.magic_resource_replenish = 0.2
 				self.magic_resource_spend_modifer = 1
 				
 				
@@ -173,6 +187,7 @@ class MyGame(arcade.Window):
 				self.enem_shambler_list = arcade.SpriteList()
 				self.base_list = arcade.SpriteList()
 				self.gui_list = arcade.SpriteList()
+				self.player_list = arcade.SpriteList()
 				
 				#number of shamblers to spawn on this setup
 				self.enem_pool_shambler = 20
@@ -188,6 +203,11 @@ class MyGame(arcade.Window):
 				tree.center_x = 300
 				tree.center_y = 300
 				self.base_list.append(tree)
+				
+				player = arcade.Sprite("images/player/wizard1.png", CHARACTER_SCALING)
+				player.center_x = 600
+				player.center_y = CHARACTER_POS2
+				self.player_list.append(player)
 				
 				
 				#if (self.wall_level == 0):
@@ -211,10 +231,7 @@ class MyGame(arcade.Window):
 				arcade.draw_lrtb_rectangle_filled(0, SCREEN_WIDTH, SCREEN_HEIGHT / 3, 0, arcade.color.DARK_SPRING_GREEN)
 				
 				#Draw magic bar
-				for magic in self.magic_list:
-					arcade.draw_circle_filled(magic.x, magic.y, magic.height , arcade.color.LAVENDER_BLUE, 128)
-					arcade.draw_arc_filled(magic.x, magic.y, magic.width,  magic.height, magic.color, magic.s_angle, (360* self.magic_resource_percentage), magic.tilt, magic.sections)
-					arcade.draw_circle_outline(magic.x, magic.y, magic.height , arcade.color.REGALIA, 5, 128)
+				
 						
 				if self.kill_timer > 1:
 					arcade.draw_text("YOU HAVE FAILED", SCREEN_WIDTH/2, SCREEN_HEIGHT/2, arcade.color.CRIMSON_GLORY, 40)
@@ -222,19 +239,27 @@ class MyGame(arcade.Window):
 				
 				# Call draw() on all your sprite lists below
 				self.gui_list.draw()
+				self.base_list.draw()
+				self.enem_list.draw()
+				self.enem_shambler_list.draw()
+				self.player_list.draw()
 				self.spell_list.draw()
 				self.spell_firefury_list.draw()
 				self.spell_waterblast_list.draw()
 				self.spell_lightning_list.draw()
-				self.base_list.draw()
-				self.enem_list.draw()
-				self.enem_shambler_list.draw()
-
 				#draw health bar
-				
+				#the reason there is a plus value after the width draw position is if you want to change the thickness of the bars, use the added value to modify
 				for health in self.health_list:
-					arcade.draw_lrtb_rectangle_filled(1200,1200+self.health_value,700+health.width, 700, arcade.color.CAMEO_PINK)
-					arcade.draw_lrtb_rectangle_outline(1200,(1200+health.max),700+health.width, 700, arcade.color.CANARY_YELLOW, 5)
+					arcade.draw_lrtb_rectangle_filled(1100,1100+self.health_value,750+20, 750, arcade.color.CAMEO_PINK)
+					arcade.draw_lrtb_rectangle_outline(1100,(1100+health.max),750+20, 750, arcade.color.CANARY_YELLOW, 5)
+					
+				for magic in self.magic_list:
+					#arcade.draw_circle_filled(magic.x, magic.y, magic.height , arcade.color.LAVENDER_BLUE, 128)
+					#arcade.draw_arc_filled(magic.x, magic.y, magic.width,  magic.height, magic.color, magic.s_angle, (360* self.magic_resource_percentage), magic.tilt, magic.sections)
+					#arcade.draw_circle_outline(magic.x, magic.y, magic.height , arcade.color.REGALIA, 5, 128)
+					arcade.draw_lrtb_rectangle_filled(1100,1100+magic.max,700+20, 700, arcade.color.REGALIA)
+					arcade.draw_lrtb_rectangle_filled(1100,1100+(magic.max*self.magic_resource_percentage),700+20, 700, arcade.color.LAVENDER_BLUE)
+					arcade.draw_lrtb_rectangle_outline(1100,(1100+magic.max),700+20, 700, arcade.color.REGALIA, 5)
 					
 		def update(self, delta_time):
 				"""
@@ -251,6 +276,7 @@ class MyGame(arcade.Window):
 				self.gui_list.update()
 				self.enem_list.update()
 				self.enem_shambler_list.update()
+				self.player_list.update()
 				
 				#logic for spells
 				for firefury in self.spell_firefury_list:
@@ -278,12 +304,20 @@ class MyGame(arcade.Window):
 						if shambler.health < 0:
 							shambler.kill()
 							print ("Shambler DESTROYED")
-							
+						
+						#code for slowing effect from water
+						if shambler.slow_timer > 0:
+							shambler.change_x = (shambler.base_speed * 0.5)
+						else:
+							shambler.change_x = shambler.base_speed
+						
+						
 						if shambler.center_x < 700:
 							shambler.change_x = 0
 						
 						if shambler.attack_timer <= 0 and shambler.change_x == 0:
 							self.health_value -= 1
+							print (self.health_value)
 							shambler.attack_timer = 90
 						#Make hit lists 
 						shambler_fire_hit_list = arcade.check_for_collision_with_list(shambler, self.spell_firefury_list)
@@ -298,6 +332,8 @@ class MyGame(arcade.Window):
 							
 						if len(shambler_water_hit_list) > 0:
 							shambler.health -= self.waterblast_damage
+							#cause a slowing effect when hit
+							shambler.slow_timer = 120
 												
 						for waterblast in shambler_water_hit_list:
 							waterblast.remove_from_sprite_lists()
@@ -327,11 +363,14 @@ class MyGame(arcade.Window):
 					shambler.center_x = 1800
 					shambler.center_y = random.randint(50,300)
 					shambler.change_x = random.randint(-4, -1)
+					shambler.base_speed = shambler.change_x
 					shambler.health = random.randint(10, 50)
 					shambler.attack_timer = 90
+					shambler.slow_timer = 0
 					self.enem_shambler_list.append(shambler)
 					self.enem_pool_shambler -= 1
 					self.enem_gap_shambler = random.randint(30, 180)
+					
 					
 					
 				
@@ -348,6 +387,14 @@ class MyGame(arcade.Window):
 					
 				if self.kill_timer > 180:
 					arcade.close_window()
+					
+				
+				#code to update shooting positions
+				
+				for player in self.player_list:
+					self.player_shoot_x = player.center_x + 30
+					self.player_shoot_y = player.center_y + 10
+					
 				
 
 		def on_key_press(self, key, key_modifiers):
@@ -368,8 +415,36 @@ class MyGame(arcade.Window):
 						arcade.play_sound(self.SpellChange)
 						print ("Spell 3 selected")
 				
+				if key == arcade.key.W :
+					for player in self.player_list:
+						if player.center_y == CHARACTER_POS1:
+							player.center_y = CHARACTER_POS2
+						elif player.center_y == CHARACTER_POS2:
+							player.center_y = CHARACTER_POS3
+							
+				if key ==  arcade.key.UP:
+					for player in self.player_list:
+						if player.center_y == CHARACTER_POS1:
+							player.center_y = CHARACTER_POS2
+						elif player.center_y == CHARACTER_POS2:
+							player.center_y = CHARACTER_POS3
 				
+				if key == (arcade.key.DOWN or arcade.key.S):
+					for player in self.player_list:
+						if player.center_y == CHARACTER_POS3:
+							player.center_y = CHARACTER_POS2
+						elif player.center_y == CHARACTER_POS2:
+							player.center_y = CHARACTER_POS1
 
+				if key ==  arcade.key.S:
+					for player in self.player_list:
+						if player.center_y == CHARACTER_POS3:
+							player.center_y = CHARACTER_POS2
+						elif player.center_y == CHARACTER_POS2:
+							player.center_y = CHARACTER_POS1
+							
+							
+							
 		def on_key_release(self, key, key_modifiers):
 				"""
 				Called whenever the user lets off a previously pressed key.
@@ -392,8 +467,8 @@ class MyGame(arcade.Window):
 				#check selected spell and draw spell at caster location
 				if (self.selected_spell == 1) and (self.magic_resource_percentage > (self.magic_resource_spend_modifer * self.firefury_cost)):
 						firefury = arcade.Sprite("images/spells/spell_firefury1.png", CHARACTER_SCALING)
-						firefury.center_x = SPELL_CAST_X
-						firefury.center_y = SPELL_CAST_Y
+						firefury.center_x = self.player_shoot_x
+						firefury.center_y = self.player_shoot_y
 						self.magic_resource_percentage = self.magic_resource_percentage - self.firefury_cost
 						#plays spell sound effect)
 						arcade.play_sound(self.firefury)
@@ -403,9 +478,15 @@ class MyGame(arcade.Window):
 						destination_x = x
 						destination_y = y
 						
-						difference_in_x = destination_x - SPELL_CAST_X
-						difference_in_y = destination_y - SPELL_CAST_Y
+						difference_in_x = destination_x - self.player_shoot_x
+						difference_in_y = destination_y - self.player_shoot_y
 						angle = math.atan2(difference_in_y, difference_in_x)
+						
+						# sets firing arc in front of character
+						if angle > (1/6) and angle <= 3.1:
+							angle = (1/6)
+						elif angle < 0 and angle < (-1/6):
+							angle = (-1/6)
 						
 						#use calculated angle to rotate spell sprite
 						firefury.angle = math.degrees(angle)
@@ -420,8 +501,8 @@ class MyGame(arcade.Window):
 
 				elif (self.selected_spell == 2) and (self.magic_resource_percentage > (self.magic_resource_spend_modifer * self.waterblast_cost)):
 						waterblast = arcade.Sprite("images/spells/spell_waterblast1.png", CHARACTER_SCALING)
-						waterblast.center_x = SPELL_CAST_X
-						waterblast.center_y = SPELL_CAST_Y
+						waterblast.center_x = self.player_shoot_x
+						waterblast.center_y = self.player_shoot_y
 						self.magic_resource_percentage = self.magic_resource_percentage - self.waterblast_cost
 						#Code for sound effect will be here when sound found
 						
@@ -429,10 +510,18 @@ class MyGame(arcade.Window):
 						destination_x = x
 						destination_y = y
 						
-						difference_in_x = destination_x - SPELL_CAST_X
-						difference_in_y = destination_y - SPELL_CAST_Y
+						difference_in_x = destination_x - self.player_shoot_x
+						difference_in_y = destination_y - self.player_shoot_y
 						angle = math.atan2(difference_in_y, difference_in_x)
 						
+						# sets firing arc in front of character
+						if angle > (1/6) and angle <= 3.1:
+							angle = (1/6)
+						elif angle < 0 and angle < (-1/6):
+							angle = (-1/6)
+						
+						
+						print (angle)
 						#use calculated angle to rotate spell sprite
 						waterblast.angle = math.degrees(angle)
 						
