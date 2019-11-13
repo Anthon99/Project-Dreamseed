@@ -31,13 +31,34 @@ FIRESPEED = 5
 WATERSPEED = 15
 LIGHTNINGSPEED = 50
 
+Fire1_Non_Active = 0
+Fire1_Active = 1
+
+
+class UpgradeIcons(arcade.Sprite):
+
+    def __init__(self):
+        super().__init__()
+
+        self.Fire1_Active_S = False
+
+        texture = arcade.load_texture("images/place holders/Non-active fire 1.png", 1)
+        self.textures.append(texture)
+        texture = arcade.load_texture("images/place holders/Active fire 1.png", 1)
+        self.textures.append(texture)
+
+        self.set_texture(Fire1_Non_Active)
+
+    def update(self):
+        if self.Fire1_Active_S:
+            self.set_texture(Fire1_Active)
+
 
 class UpgradeMenu:
+    Fire1_Active = False
 
     def __init__(self):
         # Upgrade menu sprite list
-        self.fire_icon_1 = None
-        self.active_fire_icon_1 = None
         self.upgrade_menu = None
         self.background_list = None
         self.menu_list = None
@@ -65,14 +86,14 @@ def setup_upgrade_menu():
     next_icon.center_y = 100
     upgrade_menu.menu_list.append(next_icon)
 
-    fire_icon_1 = arcade.Sprite("images/place holders/Non-active fire 1.png", 1)
-    fire_icon_1.center_x = 100
-    fire_icon_1.center_y = 650
-    upgrade_menu.menu_list.append(fire_icon_1)
-
-    active_fire_icon_1 = arcade.Sprite("images/place holders/Active fire 1.png", 1)
-    active_fire_icon_1.center_x = 100
-    active_fire_icon_1.center_y = 650
+    # fire_icon_1 = arcade.Sprite("images/place holders/Non-active fire 1.png", 1)
+    # fire_icon_1.center_x = 100
+    # fire_icon_1.center_y = 650
+    # upgrade_menu.menu_list.append(fire_icon_1)
+    #
+    # active_fire_icon_1 = arcade.Sprite("images/place holders/Active fire 1.png", 1)
+    # active_fire_icon_1.center_x = 100
+    # active_fire_icon_1.center_y = 650
 
     return upgrade_menu
 
@@ -197,13 +218,15 @@ class MyGame(arcade.Window):
         self.main_menu_open = True
         self.difficulty_menu_open = False
         self.upgrade_menu_open = False
-        self.fire_upgrade_1 = False
 
         self.menus = None
         self.upgrade_menus = None
 
         # sprite lists live here, using individual lists so that when we do collision checking different spells can
         # do different things to different enemies if we want.
+        self.all_menu_sprites = None
+        self.all_menu_sprites_lists = None
+
         self.spell_list = None
         self.spell_firefury_list = None
         self.spell_waterblast_list = None
@@ -301,10 +324,17 @@ class MyGame(arcade.Window):
         self.menus.append(menu)
 
         # Declaring upgrade menu array and appending Menu object to it.
-        
+
         self.upgrade_menus = []
         upgrade_menu = setup_upgrade_menu()
         self.upgrade_menus.append(upgrade_menu)
+
+        self.all_menu_sprites_lists = arcade.SpriteList()
+
+        self.all_menu_sprites = UpgradeIcons()
+        self.all_menu_sprites.center_x = 800
+        self.all_menu_sprites.center_y = 400
+        self.all_menu_sprites_lists.append(self.all_menu_sprites)
 
     def on_draw(self):
         """
@@ -360,6 +390,7 @@ class MyGame(arcade.Window):
         elif self.upgrade_menu_open:
             self.upgrade_menus[0].background_list.draw()
             self.upgrade_menus[0].menu_list.draw()
+            self.all_menu_sprites_list.draw()
 
         self.gui_list.draw()
 
@@ -522,10 +553,9 @@ class MyGame(arcade.Window):
 
         elif self.upgrade_menu_open:
             if 125 > x > 75 and 675 > y > 625:
-                self.fire_upgrade_1 = True
+                UpgradeIcons.Fire1_Active_S = True
                 print("fire 1 selected")
-                print(self.fire_upgrade_1)
-                setup_upgrade_menu().upgrade_menu.menu_list.append(setup_upgrade_menu().fire_icon_1)
+                print(UpgradeMenu.Fire1_Active)
 
         # check selected spell and draw spell at caster location
         elif (self.selected_spell == 1) and (
