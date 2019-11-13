@@ -33,35 +33,24 @@ LIGHTNINGSPEED = 50
 
 Fire1_Non_Active = 0
 Fire1_Active = 1
-
-
-class UpgradeIcons(arcade.Sprite):
-
-    def __init__(self):
-        super().__init__()
-
-        self.Fire1_Active_S = False
-
-        texture = arcade.load_texture("images/place holders/Non-active fire 1.png", 1)
-        self.textures.append(texture)
-        texture = arcade.load_texture("images/place holders/Active fire 1.png", 1)
-        self.textures.append(texture)
-
-        self.set_texture(Fire1_Non_Active)
-
-    def update(self):
-        if self.Fire1_Active_S:
-            self.set_texture(Fire1_Active)
+Fire1_Active_S = False
 
 
 class UpgradeMenu:
-    Fire1_Active = False
 
     def __init__(self):
         # Upgrade menu sprite list
         self.upgrade_menu = None
         self.background_list = None
         self.menu_list = None
+        self.active_fire1 = None
+        self.active_lightning1 = None
+        self.active_plasma1 = None
+        self.active_water1 = None
+        self.active_fire2 = None
+        self.active_lightning2 = None
+        self.active_plasma2 = None
+        self.active_water2 = None
 
 
 def setup_upgrade_menu():
@@ -70,6 +59,16 @@ def setup_upgrade_menu():
     # Appending upgrade menu sprites to lists
     upgrade_menu.background_list = arcade.SpriteList()
     upgrade_menu.menu_list = arcade.SpriteList()
+
+    upgrade_menu.active_fire1 = arcade.SpriteList()
+    upgrade_menu.active_lightning1 = arcade.SpriteList()
+    upgrade_menu.active_plasma1 = arcade.SpriteList()
+    upgrade_menu.active_water1 = arcade.SpriteList()
+
+    upgrade_menu.active_fire2 = arcade.SpriteList()
+    upgrade_menu.active_lightning2 = arcade.SpriteList()
+    upgrade_menu.active_plasma2 = arcade.SpriteList()
+    upgrade_menu.active_water2 = arcade.SpriteList()
 
     back_drop = arcade.Sprite("images/menu icons/MenuBackdrop.png", 1)
     back_drop.center_x = 800
@@ -86,14 +85,85 @@ def setup_upgrade_menu():
     next_icon.center_y = 100
     upgrade_menu.menu_list.append(next_icon)
 
-    # fire_icon_1 = arcade.Sprite("images/place holders/Non-active fire 1.png", 1)
-    # fire_icon_1.center_x = 100
-    # fire_icon_1.center_y = 650
-    # upgrade_menu.menu_list.append(fire_icon_1)
-    #
-    # active_fire_icon_1 = arcade.Sprite("images/place holders/Active fire 1.png", 1)
-    # active_fire_icon_1.center_x = 100
-    # active_fire_icon_1.center_y = 650
+    fire_icon_1 = arcade.Sprite("images/place holders/Non-active fire 1.png", 1)
+    fire_icon_1.center_x = 100
+    fire_icon_1.center_y = 650
+    upgrade_menu.menu_list.append(fire_icon_1)
+
+    active_fire_icon_1 = arcade.Sprite("images/place holders/Active fire 1.png", 1)
+    active_fire_icon_1.center_x = 100
+    active_fire_icon_1.center_y = 650
+    upgrade_menu.active_fire1.append(active_fire_icon_1)
+
+    fire_icon_2 = arcade.Sprite("images/place holders/Non-active fire 1.png", 1)
+    fire_icon_2.center_x = 200
+    fire_icon_2.center_y = 650
+    upgrade_menu.menu_list.append(fire_icon_2)
+
+    active_fire_icon_2 = arcade.Sprite("images/place holders/Active fire 1.png", 1)
+    active_fire_icon_2.center_x = 200
+    active_fire_icon_2.center_y = 650
+    upgrade_menu.active_fire2.append(active_fire_icon_2)
+
+    lightning_icon_1 = arcade.Sprite("images/place holders/Non-active lightning 1.png", 1)
+    lightning_icon_1.center_x = 100
+    lightning_icon_1.center_y = 550
+    upgrade_menu.menu_list.append(lightning_icon_1)
+
+    active_lightning_icon_1 = arcade.Sprite("images/place holders/Active lightning 1.png", 1)
+    active_lightning_icon_1.center_x = 100
+    active_lightning_icon_1.center_y = 550
+    upgrade_menu.active_lightning1.append(active_lightning_icon_1)
+
+    lightning_icon_2 = arcade.Sprite("images/place holders/Non-active lightning 1.png", 1)
+    lightning_icon_2.center_x = 200
+    lightning_icon_2.center_y = 550
+    upgrade_menu.menu_list.append(lightning_icon_2)
+
+    active_lightning_icon_2 = arcade.Sprite("images/place holders/Active lightning 1.png", 1)
+    active_lightning_icon_2.center_x = 200
+    active_lightning_icon_2.center_y = 550
+    upgrade_menu.active_lightning2.append(active_lightning_icon_2)
+
+    plasma_icon_1 = arcade.Sprite("images/place holders/Non-active plasma 1.png", 1)
+    plasma_icon_1.center_x = 100
+    plasma_icon_1.center_y = 450
+    upgrade_menu.menu_list.append(plasma_icon_1)
+
+    active_plasma_icon_1 = arcade.Sprite("images/place holders/Active plasma 1.png", 1)
+    active_plasma_icon_1.center_x = 100
+    active_plasma_icon_1.center_y = 450
+    upgrade_menu.active_plasma1.append(active_plasma_icon_1)
+
+    plasma_icon_2 = arcade.Sprite("images/place holders/Non-active plasma 1.png", 1)
+    plasma_icon_2.center_x = 200
+    plasma_icon_2.center_y = 450
+    upgrade_menu.menu_list.append(plasma_icon_2)
+
+    active_plasma_icon_2 = arcade.Sprite("images/place holders/Active plasma 1.png", 1)
+    active_plasma_icon_2.center_x = 200
+    active_plasma_icon_2.center_y = 450
+    upgrade_menu.active_plasma2.append(active_plasma_icon_2)
+
+    water_icon_1 = arcade.Sprite("images/place holders/Non-active water 1.png", 1)
+    water_icon_1.center_x = 100
+    water_icon_1.center_y = 350
+    upgrade_menu.menu_list.append(water_icon_1)
+
+    active_water_icon_1 = arcade.Sprite("images/place holders/Active water 1.png", 1)
+    active_water_icon_1.center_x = 100
+    active_water_icon_1.center_y = 350
+    upgrade_menu.active_water1.append(active_water_icon_1)
+
+    water_icon_2 = arcade.Sprite("images/place holders/Non-active water 1.png", 1)
+    water_icon_2.center_x = 200
+    water_icon_2.center_y = 350
+    upgrade_menu.menu_list.append(water_icon_2)
+
+    active_water_icon_2 = arcade.Sprite("images/place holders/Active water 1.png", 1)
+    active_water_icon_2.center_x = 200
+    active_water_icon_2.center_y = 350
+    upgrade_menu.active_water2.append(active_water_icon_2)
 
     return upgrade_menu
 
@@ -219,13 +289,21 @@ class MyGame(arcade.Window):
         self.difficulty_menu_open = False
         self.upgrade_menu_open = False
 
+        self.fire1_purchased = False
+        self.fire2_purchased = False
+        self.lightning1_purchased = False
+        self.lightning2_purchased = False
+        self.plasma1_purchased = False
+        self.plasma2_purchased = False
+        self.water1_purchased = False
+        self.water2_purchased = False
+
         self.menus = None
         self.upgrade_menus = None
+        self.upgrade_icons = None
 
         # sprite lists live here, using individual lists so that when we do collision checking different spells can
         # do different things to different enemies if we want.
-        self.all_menu_sprites = None
-        self.all_menu_sprites_lists = None
 
         self.spell_list = None
         self.spell_firefury_list = None
@@ -297,6 +375,8 @@ class MyGame(arcade.Window):
         self.base_list = arcade.SpriteList()
         self.gui_list = arcade.SpriteList()
 
+        self.upgrade_icons = arcade.SpriteList()
+
         # number of shamblers to spawn on this setup
         self.enem_pool_shambler = 20
         # the starting timing gap between spawning them for this setup
@@ -324,17 +404,9 @@ class MyGame(arcade.Window):
         self.menus.append(menu)
 
         # Declaring upgrade menu array and appending Menu object to it.
-
         self.upgrade_menus = []
         upgrade_menu = setup_upgrade_menu()
         self.upgrade_menus.append(upgrade_menu)
-
-        self.all_menu_sprites_lists = arcade.SpriteList()
-
-        self.all_menu_sprites = UpgradeIcons()
-        self.all_menu_sprites.center_x = 800
-        self.all_menu_sprites.center_y = 400
-        self.all_menu_sprites_lists.append(self.all_menu_sprites)
 
     def on_draw(self):
         """
@@ -383,14 +455,30 @@ class MyGame(arcade.Window):
             self.menus[0].menu_background.draw()
             self.menus[0].menu_list1.draw()
 
-        elif self.difficulty_menu_open:
+        if self.difficulty_menu_open:
             self.menus[0].menu_background.draw()
             self.menus[0].menu_list2.draw()
 
-        elif self.upgrade_menu_open:
+        if self.upgrade_menu_open:
             self.upgrade_menus[0].background_list.draw()
             self.upgrade_menus[0].menu_list.draw()
-            self.all_menu_sprites_list.draw()
+
+            if self.fire1_purchased:
+                self.upgrade_menus[0].active_fire1.draw()
+            if self.fire2_purchased:
+                self.upgrade_menus[0].active_fire2.draw()
+            if self.lightning1_purchased:
+                self.upgrade_menus[0].active_lightning1.draw()
+            if self.lightning2_purchased:
+                self.upgrade_menus[0].active_lightning2.draw()
+            if self.plasma1_purchased:
+                self.upgrade_menus[0].active_plasma1.draw()
+            if self.plasma2_purchased:
+                self.upgrade_menus[0].active_plasma2.draw()
+            if self.water1_purchased:
+                self.upgrade_menus[0].active_water1.draw()
+            if self.water2_purchased:
+                self.upgrade_menus[0].active_water2.draw()
 
         self.gui_list.draw()
 
@@ -410,7 +498,10 @@ class MyGame(arcade.Window):
             self.gui_list.update()
             self.enem_list.update()
             self.enem_shambler_list.update()
-            setup_upgrade_menu().menu_list.update()
+            self.upgrade_icons.update()
+
+            # if self.fire1_active:
+            #     self.upgrade_icons.append(self.active_fire_icon_1)
 
             # logic for spells
             for firefury in self.spell_firefury_list:
@@ -503,9 +594,6 @@ class MyGame(arcade.Window):
         if key == arcade.key.LEFT:
             self.upgrade_menu_open = True
 
-        if key == arcade.key.RIGHT:
-            self.upgrade_menu_open = False
-
         if key == (arcade.key.KEY_1 or arcade.key.NUM_1):
             self.selected_spell = 1
             # Plays sounds for changing spells, can make each sound different later
@@ -542,89 +630,117 @@ class MyGame(arcade.Window):
                 """
 
         # Navigating main menu
-        if self.main_menu_open:
-            if 1000 > x > 600 and 450 > y > 350:
-                self.main_menu_open = False
-                self.difficulty_menu_open = True
+        if self.main_menu_open and 1000 > x > 600 and 450 > y > 350:
+            self.main_menu_open = False
+            self.difficulty_menu_open = True
 
         elif self.difficulty_menu_open:
             if 1000 > x > 600 and 450 > y > 350:
                 self.difficulty_menu_open = False
 
-        elif self.upgrade_menu_open:
+        if self.upgrade_menu_open:
+
+            if 1500 > x > 1100 and 150 > y > 50:
+                self.upgrade_menu_open = False
+
             if 125 > x > 75 and 675 > y > 625:
-                UpgradeIcons.Fire1_Active_S = True
-                print("fire 1 selected")
-                print(UpgradeMenu.Fire1_Active)
+                print("Fire 1 selected")
+                self.fire1_purchased = True
+            if self.fire1_purchased and 225 > x > 175 and 675 > y > 625:
+                print("Fire 2 selected")
+                self.fire2_purchased = True
+
+            if 125 > x > 75 and 575 > y > 525:
+                print("Lightning 1 selected")
+                self.lightning1_purchased = True
+            if self.lightning1_purchased and 225 > x > 175 and 575 > y > 525:
+                print("Lightning 2 selected")
+                self.lightning2_purchased = True
+
+            if 125 > x > 75 and 475 > y > 425:
+                print("Plasma 1 selected")
+                self.plasma1_purchased = True
+            if self.plasma1_purchased and 225 > x > 175 and 475 > y > 425:
+                print("Plasma 2 selected")
+                self.plasma2_purchased = True
+
+            if 125 > x > 75 and 375 > y > 325:
+                print("Water 1 selected")
+                self.water1_purchased = True
+            if self.water1_purchased and 225 > x > 175 and 375 > y > 325:
+                print("Water 2 selected")
+                self.water2_purchased = True
 
         # check selected spell and draw spell at caster location
-        elif (self.selected_spell == 1) and (
-                self.magic_resource_percentage > (self.magic_resource_spend_modifer * self.firefury_cost)):
-            firefury = arcade.Sprite("images/spells/spell_firefury1.png", CHARACTER_SCALING)
-            firefury.center_x = SPELL_CAST_X
-            firefury.center_y = SPELL_CAST_Y
-            self.magic_resource_percentage = self.magic_resource_percentage - self.firefury_cost
-            # plays spell sound effect)
-            arcade.play_sound(self.firefury)
+        if not self.main_menu_open and not self.difficulty_menu_open and not self.upgrade_menu_open:
 
-            # grab mouse position to calculate aim
-            destination_x = x
-            destination_y = y
+            if (self.selected_spell == 1) and (
+                    self.magic_resource_percentage > (self.magic_resource_spend_modifer * self.firefury_cost)):
+                firefury = arcade.Sprite("images/spells/spell_firefury1.png", CHARACTER_SCALING)
+                firefury.center_x = SPELL_CAST_X
+                firefury.center_y = SPELL_CAST_Y
+                self.magic_resource_percentage = self.magic_resource_percentage - self.firefury_cost
+                # plays spell sound effect)
+                arcade.play_sound(self.firefury)
 
-            difference_in_x = destination_x - SPELL_CAST_X
-            difference_in_y = destination_y - SPELL_CAST_Y
-            angle = math.atan2(difference_in_y, difference_in_x)
+                # grab mouse position to calculate aim
+                destination_x = x
+                destination_y = y
 
-            # use calculated angle to rotate spell sprite
-            firefury.angle = math.degrees(angle)
+                difference_in_x = destination_x - SPELL_CAST_X
+                difference_in_y = destination_y - SPELL_CAST_Y
+                angle = math.atan2(difference_in_y, difference_in_x)
 
-            # calc rates of change to move spell in right direction
+                # use calculated angle to rotate spell sprite
+                firefury.angle = math.degrees(angle)
 
-            firefury.change_x = math.cos(angle) * FIRESPEED
-            firefury.change_y = math.sin(angle) * FIRESPEED
+                # calc rates of change to move spell in right direction
 
-            # append to sprite list
-            self.spell_firefury_list.append(firefury)
+                firefury.change_x = math.cos(angle) * FIRESPEED
+                firefury.change_y = math.sin(angle) * FIRESPEED
 
-        elif (self.selected_spell == 2) and (
-                self.magic_resource_percentage > (self.magic_resource_spend_modifer * self.waterblast_cost)):
-            waterblast = arcade.Sprite("images/spells/spell_waterblast1.png", CHARACTER_SCALING)
-            waterblast.center_x = SPELL_CAST_X
-            waterblast.center_y = SPELL_CAST_Y
-            self.magic_resource_percentage = self.magic_resource_percentage - self.waterblast_cost
-            # Code for sound effect will be here when sound found
+                # append to sprite list
+                self.spell_firefury_list.append(firefury)
 
-            # grab mouse position to calculate aim
-            destination_x = x
-            destination_y = y
+            elif (self.selected_spell == 2) and (
+                    self.magic_resource_percentage > (self.magic_resource_spend_modifer * self.waterblast_cost)):
+                waterblast = arcade.Sprite("images/spells/spell_waterblast1.png", CHARACTER_SCALING)
+                waterblast.center_x = SPELL_CAST_X
+                waterblast.center_y = SPELL_CAST_Y
+                self.magic_resource_percentage = self.magic_resource_percentage - self.waterblast_cost
+                # Code for sound effect will be here when sound found
 
-            difference_in_x = destination_x - SPELL_CAST_X
-            difference_in_y = destination_y - SPELL_CAST_Y
-            angle = math.atan2(difference_in_y, difference_in_x)
+                # grab mouse position to calculate aim
+                destination_x = x
+                destination_y = y
 
-            # use calculated angle to rotate spell sprite
-            waterblast.angle = math.degrees(angle)
+                difference_in_x = destination_x - SPELL_CAST_X
+                difference_in_y = destination_y - SPELL_CAST_Y
+                angle = math.atan2(difference_in_y, difference_in_x)
 
-            # calc rates of change to move spell in right direction
+                # use calculated angle to rotate spell sprite
+                waterblast.angle = math.degrees(angle)
 
-            waterblast.change_x = math.cos(angle) * WATERSPEED
-            waterblast.change_y = math.sin(angle) * WATERSPEED
+                # calc rates of change to move spell in right direction
 
-            # append to sprite list
-            self.spell_waterblast_list.append(waterblast)
+                waterblast.change_x = math.cos(angle) * WATERSPEED
+                waterblast.change_y = math.sin(angle) * WATERSPEED
 
-        elif (self.selected_spell == 3) and (
-                self.magic_resource_percentage > (self.magic_resource_spend_modifer * self.lightning_cost)):
-            lightning = arcade.Sprite("images/spells/spell_lightning2.png")
-            lightning.center_x = x
-            lightning.center_y = SCREEN_HEIGHT + 200
-            self.magic_resource_percentage = self.magic_resource_percentage - self.lightning_cost
+                # append to sprite list
+                self.spell_waterblast_list.append(waterblast)
 
-            # unlike other spells, lightning comes from the top of the screen
-            lightning.angle = 0
-            lightning.change_y = -LIGHTNINGSPEED
+            elif (self.selected_spell == 3) and (
+                    self.magic_resource_percentage > (self.magic_resource_spend_modifer * self.lightning_cost)):
+                lightning = arcade.Sprite("images/spells/spell_lightning2.png")
+                lightning.center_x = x
+                lightning.center_y = SCREEN_HEIGHT + 200
+                self.magic_resource_percentage = self.magic_resource_percentage - self.lightning_cost
 
-            self.spell_lightning_list.append(lightning)
+                # unlike other spells, lightning comes from the top of the screen
+                lightning.angle = 0
+                lightning.change_y = -LIGHTNINGSPEED
+
+                self.spell_lightning_list.append(lightning)
 
     def on_mouse_release(self, x, y, button, key_modifiers):
         """
