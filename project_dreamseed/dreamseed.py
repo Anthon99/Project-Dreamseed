@@ -44,16 +44,27 @@ class UpgradeMenu:
         self.background_list = None
         self.menu_list = None
 
+        self.active_wall1 = None
         self.active_fire1 = None
         self.active_lightning1 = None
         self.active_plasma1 = None
         self.active_water1 = None
+        self.active_wall2 = None
         self.active_fire2 = None
         self.active_lightning2 = None
         self.active_plasma2 = None
         self.active_water2 = None
 
+        self.wall1_details = None
+        self.wall2_details = None
         self.fire1_details = None
+        self.fire2_details = None
+        self.lightning1_details = None
+        self.lightning2_details = None
+        self.plasma1_details = None
+        self.plasma2_details = None
+        self.water1_details = None
+        self.water2_details = None
 
 
 def setup_upgrade_menu():
@@ -63,17 +74,28 @@ def setup_upgrade_menu():
     upgrade_menu.background_list = arcade.SpriteList()
     upgrade_menu.menu_list = arcade.SpriteList()
 
+    upgrade_menu.active_wall1 = arcade.SpriteList()
     upgrade_menu.active_fire1 = arcade.SpriteList()
     upgrade_menu.active_lightning1 = arcade.SpriteList()
     upgrade_menu.active_plasma1 = arcade.SpriteList()
     upgrade_menu.active_water1 = arcade.SpriteList()
 
+    upgrade_menu.active_wall2 = arcade.SpriteList()
     upgrade_menu.active_fire2 = arcade.SpriteList()
     upgrade_menu.active_lightning2 = arcade.SpriteList()
     upgrade_menu.active_plasma2 = arcade.SpriteList()
     upgrade_menu.active_water2 = arcade.SpriteList()
 
+    upgrade_menu.wall1_details = arcade.SpriteList()
+    upgrade_menu.wall2_details = arcade.SpriteList()
     upgrade_menu.fire1_details = arcade.SpriteList()
+    upgrade_menu.fire2_details = arcade.SpriteList()
+    upgrade_menu.lightning1_details = arcade.SpriteList()
+    upgrade_menu.lightning2_details = arcade.SpriteList()
+    upgrade_menu.plasma1_details = arcade.SpriteList()
+    upgrade_menu.plasma2_details = arcade.SpriteList()
+    upgrade_menu.water1_details = arcade.SpriteList()
+    upgrade_menu.water2_details = arcade.SpriteList()
 
     back_drop = arcade.Sprite("images/menu icons/MenuBackdrop.png", 1)
     back_drop.center_x = 800
@@ -91,90 +113,156 @@ def setup_upgrade_menu():
     upgrade_menu.menu_list.append(next_icon)
 
     # Upgrade menu icons
-    fire_icon_1 = arcade.Sprite("images/place holders/Non-active fire 1.png", 1)
+    wall_icon_1 = arcade.Sprite("images/menu icons/Upgrade Icons/Non-active wall 1.png", 1)
+    wall_icon_1.center_x = 665
+    wall_icon_1.center_y = 650
+    upgrade_menu.menu_list.append(wall_icon_1)
+
+    active_wall_icon_1 = arcade.Sprite("images/menu icons/Upgrade Icons/Active wall 1.png", 1)
+    active_wall_icon_1.center_x = 665
+    active_wall_icon_1.center_y = 650
+    upgrade_menu.active_wall1.append(active_wall_icon_1)
+
+    wall_icon_2 = arcade.Sprite("images/menu icons/Upgrade Icons/Non-active wall 1.png", 1)
+    wall_icon_2.center_x = 765
+    wall_icon_2.center_y = 650
+    upgrade_menu.menu_list.append(wall_icon_2)
+
+    active_wall_icon_2 = arcade.Sprite("images/menu icons/Upgrade Icons/Active wall 1.png", 1)
+    active_wall_icon_2.center_x = 765
+    active_wall_icon_2.center_y = 650
+    upgrade_menu.active_wall2.append(active_wall_icon_2)
+
+    fire_icon_1 = arcade.Sprite("images/menu icons/Upgrade Icons/Non-active fire 1.png", 1)
     fire_icon_1.center_x = 100
     fire_icon_1.center_y = 650
     upgrade_menu.menu_list.append(fire_icon_1)
 
-    active_fire_icon_1 = arcade.Sprite("images/place holders/Active fire 1.png", 1)
+    active_fire_icon_1 = arcade.Sprite("images/menu icons/Upgrade Icons/Active fire 1.png", 1)
     active_fire_icon_1.center_x = 100
     active_fire_icon_1.center_y = 650
     upgrade_menu.active_fire1.append(active_fire_icon_1)
 
-    fire_icon_2 = arcade.Sprite("images/place holders/Non-active fire 1.png", 1)
+    fire_icon_2 = arcade.Sprite("images/menu icons/Upgrade Icons/Non-active fire 1.png", 1)
     fire_icon_2.center_x = 200
     fire_icon_2.center_y = 650
     upgrade_menu.menu_list.append(fire_icon_2)
 
-    active_fire_icon_2 = arcade.Sprite("images/place holders/Active fire 1.png", 1)
+    active_fire_icon_2 = arcade.Sprite("images/menu icons/Upgrade Icons/Active fire 1.png", 1)
     active_fire_icon_2.center_x = 200
     active_fire_icon_2.center_y = 650
     upgrade_menu.active_fire2.append(active_fire_icon_2)
 
-    lightning_icon_1 = arcade.Sprite("images/place holders/Non-active lightning 1.png", 1)
+    lightning_icon_1 = arcade.Sprite("images/menu icons/Upgrade Icons/Non-active lightning 1.png", 1)
     lightning_icon_1.center_x = 100
     lightning_icon_1.center_y = 550
     upgrade_menu.menu_list.append(lightning_icon_1)
 
-    active_lightning_icon_1 = arcade.Sprite("images/place holders/Active lightning 1.png", 1)
+    active_lightning_icon_1 = arcade.Sprite("images/menu icons/Upgrade Icons/Active lightning 1.png", 1)
     active_lightning_icon_1.center_x = 100
     active_lightning_icon_1.center_y = 550
     upgrade_menu.active_lightning1.append(active_lightning_icon_1)
 
-    lightning_icon_2 = arcade.Sprite("images/place holders/Non-active lightning 1.png", 1)
+    lightning_icon_2 = arcade.Sprite("images/menu icons/Upgrade Icons/Non-active lightning 1.png", 1)
     lightning_icon_2.center_x = 200
     lightning_icon_2.center_y = 550
     upgrade_menu.menu_list.append(lightning_icon_2)
 
-    active_lightning_icon_2 = arcade.Sprite("images/place holders/Active lightning 1.png", 1)
+    active_lightning_icon_2 = arcade.Sprite("images/menu icons/Upgrade Icons/Active lightning 1.png", 1)
     active_lightning_icon_2.center_x = 200
     active_lightning_icon_2.center_y = 550
     upgrade_menu.active_lightning2.append(active_lightning_icon_2)
 
-    plasma_icon_1 = arcade.Sprite("images/place holders/Non-active plasma 1.png", 1)
+    plasma_icon_1 = arcade.Sprite("images/menu icons/Upgrade Icons/Non-active plasma 1.png", 1)
     plasma_icon_1.center_x = 100
     plasma_icon_1.center_y = 450
     upgrade_menu.menu_list.append(plasma_icon_1)
 
-    active_plasma_icon_1 = arcade.Sprite("images/place holders/Active plasma 1.png", 1)
+    active_plasma_icon_1 = arcade.Sprite("images/menu icons/Upgrade Icons/Active plasma 1.png", 1)
     active_plasma_icon_1.center_x = 100
     active_plasma_icon_1.center_y = 450
     upgrade_menu.active_plasma1.append(active_plasma_icon_1)
 
-    plasma_icon_2 = arcade.Sprite("images/place holders/Non-active plasma 1.png", 1)
+    plasma_icon_2 = arcade.Sprite("images/menu icons/Upgrade Icons/Non-active plasma 1.png", 1)
     plasma_icon_2.center_x = 200
     plasma_icon_2.center_y = 450
     upgrade_menu.menu_list.append(plasma_icon_2)
 
-    active_plasma_icon_2 = arcade.Sprite("images/place holders/Active plasma 1.png", 1)
+    active_plasma_icon_2 = arcade.Sprite("images/menu icons/Upgrade Icons/Active plasma 1.png", 1)
     active_plasma_icon_2.center_x = 200
     active_plasma_icon_2.center_y = 450
     upgrade_menu.active_plasma2.append(active_plasma_icon_2)
 
-    water_icon_1 = arcade.Sprite("images/place holders/Non-active water 1.png", 1)
+    water_icon_1 = arcade.Sprite("images/menu icons/Upgrade Icons/Non-active water 1.png", 1)
     water_icon_1.center_x = 100
     water_icon_1.center_y = 350
     upgrade_menu.menu_list.append(water_icon_1)
 
-    active_water_icon_1 = arcade.Sprite("images/place holders/Active water 1.png", 1)
+    active_water_icon_1 = arcade.Sprite("images/menu icons/Upgrade Icons/Active water 1.png", 1)
     active_water_icon_1.center_x = 100
     active_water_icon_1.center_y = 350
     upgrade_menu.active_water1.append(active_water_icon_1)
 
-    water_icon_2 = arcade.Sprite("images/place holders/Non-active water 1.png", 1)
+    water_icon_2 = arcade.Sprite("images/menu icons/Upgrade Icons/Non-active water 1.png", 1)
     water_icon_2.center_x = 200
     water_icon_2.center_y = 350
     upgrade_menu.menu_list.append(water_icon_2)
 
-    active_water_icon_2 = arcade.Sprite("images/place holders/Active water 1.png", 1)
+    active_water_icon_2 = arcade.Sprite("images/menu icons/Upgrade Icons/Active water 1.png", 1)
     active_water_icon_2.center_x = 200
     active_water_icon_2.center_y = 350
     upgrade_menu.active_water2.append(active_water_icon_2)
 
-    fire1_details_icon = arcade.Sprite("images/menu icons/fire1_details.png")
+    # Upgrade descriptions
+    wall1_details_icon = arcade.Sprite("images/menu icons/Upgrade Details/wall1_details.png")
+    wall1_details_icon.center_x = 890
+    wall1_details_icon.center_y = 575
+    upgrade_menu.wall1_details.append(wall1_details_icon)
+
+    wall2_details_icon = arcade.Sprite("images/menu icons/Upgrade Details/wall2_details.png")
+    wall2_details_icon.center_x = 990
+    wall2_details_icon.center_y = 575
+    upgrade_menu.wall2_details.append(wall2_details_icon)
+
+    fire1_details_icon = arcade.Sprite("images/menu icons/Upgrade Details/fire1_details.png")
     fire1_details_icon.center_x = 325
     fire1_details_icon.center_y = 575
     upgrade_menu.fire1_details.append(fire1_details_icon)
+
+    fire2_details_icon = arcade.Sprite("images/menu icons/Upgrade Details/fire2_details.png")
+    fire2_details_icon.center_x = 425
+    fire2_details_icon.center_y = 575
+    upgrade_menu.fire2_details.append(fire2_details_icon)
+
+    lightning1_details_icon = arcade.Sprite("images/menu icons/Upgrade Details/lightning1_details.png")
+    lightning1_details_icon.center_x = 325
+    lightning1_details_icon.center_y = 475
+    upgrade_menu.lightning1_details.append(lightning1_details_icon)
+
+    lightning2_details_icon = arcade.Sprite("images/menu icons/Upgrade Details/lightning2_details.png")
+    lightning2_details_icon.center_x = 425
+    lightning2_details_icon.center_y = 475
+    upgrade_menu.lightning2_details.append(lightning2_details_icon)
+
+    plasma1_details_icon = arcade.Sprite("images/menu icons/Upgrade Details/plasma1_details.png")
+    plasma1_details_icon.center_x = 325
+    plasma1_details_icon.center_y = 375
+    upgrade_menu.plasma1_details.append(plasma1_details_icon)
+
+    plasma2_details_icon = arcade.Sprite("images/menu icons/Upgrade Details/plasma2_details.png")
+    plasma2_details_icon.center_x = 425
+    plasma2_details_icon.center_y = 375
+    upgrade_menu.plasma2_details.append(plasma2_details_icon)
+
+    water1_details_icon = arcade.Sprite("images/menu icons/Upgrade Details/water1_details.png")
+    water1_details_icon.center_x = 325
+    water1_details_icon.center_y = 275
+    upgrade_menu.water1_details.append(water1_details_icon)
+
+    water2_details_icon = arcade.Sprite("images/menu icons/Upgrade Details/water2_details.png")
+    water2_details_icon.center_x = 425
+    water2_details_icon.center_y = 275
+    upgrade_menu.water2_details.append(water2_details_icon)
 
     return upgrade_menu
 
@@ -309,7 +397,16 @@ class MyGame(arcade.Window):
         self.water1_purchased = False
         self.water2_purchased = False
 
+        self.wall1_details_open = False
+        self.wall2_details_open = False
         self.fire1_details_open = False
+        self.fire2_details_open = False
+        self.lightning1_details_open = False
+        self.lightning2_details_open = False
+        self.plasma1_details_open = False
+        self.plasma2_details_open = False
+        self.water1_details_open = False
+        self.water2_details_open = False
 
         self.menus = None
         self.upgrade_menus = None
@@ -493,8 +590,31 @@ class MyGame(arcade.Window):
             if self.water2_purchased:
                 self.upgrade_menus[0].active_water2.draw()
 
+            if self.wall_level > 0:
+                self.upgrade_menus[0].active_wall1.draw()
+            if self.wall_level == 2:
+                self.upgrade_menus[0].active_wall2.draw()
+
+            if self.wall1_details_open:
+                self.upgrade_menus[0].wall1_details.draw()
+            if self.wall2_details_open:
+                self.upgrade_menus[0].wall2_details.draw()
             if self.fire1_details_open:
                 self.upgrade_menus[0].fire1_details.draw()
+            if self.fire2_details_open:
+                self.upgrade_menus[0].fire2_details.draw()
+            if self.lightning1_details_open:
+                self.upgrade_menus[0].lightning1_details.draw()
+            if self.lightning2_details_open:
+                self.upgrade_menus[0].lightning2_details.draw()
+            if self.plasma1_details_open:
+                self.upgrade_menus[0].plasma1_details.draw()
+            if self.plasma2_details_open:
+                self.upgrade_menus[0].plasma2_details.draw()
+            if self.water1_details_open:
+                self.upgrade_menus[0].water1_details.draw()
+            if self.water2_details_open:
+                self.upgrade_menus[0].water2_details.draw()
 
         self.gui_list.draw()
 
@@ -637,10 +757,52 @@ class MyGame(arcade.Window):
         self.cursor_sprite.center_y = y
 
         if self.upgrade_menu_open:
+            if 690 > x > 640 and 675 > y > 625:
+                self.wall1_details_open = True
+            else:
+                self.wall1_details_open = False
+            if 790 > x > 740 and 675 > y > 625:
+                self.wall2_details_open = True
+            else:
+                self.wall2_details_open = False
             if 125 > x > 75 and 675 > y > 625:
                 self.fire1_details_open = True
             else:
                 self.fire1_details_open = False
+            if 225 > x > 175 and 675 > y > 625:
+                self.fire2_details_open = True
+            else:
+                self.fire2_details_open = False
+
+            if 125 > x > 75 and 575 > y > 525:
+                self.lightning1_details_open = True
+            else:
+                self.lightning1_details_open = False
+
+            if 225 > x > 175 and 575 > y > 525:
+                self.lightning2_details_open = True
+            else:
+                self.lightning2_details_open = False
+
+            if 125 > x > 75 and 475 > y > 425:
+                self.plasma1_details_open = True
+            else:
+                self.plasma1_details_open = False
+
+            if 225 > x > 175 and 475 > y > 425:
+                self.plasma2_details_open = True
+            else:
+                self.plasma2_details_open = False
+
+            if 125 > x > 75 and 375 > y > 325:
+                self.water1_details_open = True
+            else:
+                self.water1_details_open = False
+
+            if 225 > x > 175 and 375 > y > 325:
+                self.water2_details_open = True
+            else:
+                self.water2_details_open = False
 
     def on_mouse_press(self, x, y, button, key_modifiers):
         """
@@ -688,6 +850,13 @@ class MyGame(arcade.Window):
             if self.water1_purchased and 225 > x > 175 and 375 > y > 325:
                 print("Water 2 selected")
                 self.water2_purchased = True
+
+            if 690 > x > 640 and 675 > y > 625:
+                print("Wall 1 selected")
+                self.wall_level = 1
+            if self.wall_level == 1 and 790 > x > 740 and 675 > y > 625:
+                print("Wall 2 selected")
+                self.wall_level = 2
 
         # check selected spell and draw spell at caster location
         if not self.main_menu_open and not self.difficulty_menu_open and not self.upgrade_menu_open:
