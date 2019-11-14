@@ -43,6 +43,7 @@ class UpgradeMenu:
         self.upgrade_menu = None
         self.background_list = None
         self.menu_list = None
+
         self.active_fire1 = None
         self.active_lightning1 = None
         self.active_plasma1 = None
@@ -51,6 +52,8 @@ class UpgradeMenu:
         self.active_lightning2 = None
         self.active_plasma2 = None
         self.active_water2 = None
+
+        self.fire1_details = None
 
 
 def setup_upgrade_menu():
@@ -70,6 +73,8 @@ def setup_upgrade_menu():
     upgrade_menu.active_plasma2 = arcade.SpriteList()
     upgrade_menu.active_water2 = arcade.SpriteList()
 
+    upgrade_menu.fire1_details = arcade.SpriteList()
+
     back_drop = arcade.Sprite("images/menu icons/MenuBackdrop.png", 1)
     back_drop.center_x = 800
     back_drop.center_y = 400
@@ -85,6 +90,7 @@ def setup_upgrade_menu():
     next_icon.center_y = 100
     upgrade_menu.menu_list.append(next_icon)
 
+    # Upgrade menu icons
     fire_icon_1 = arcade.Sprite("images/place holders/Non-active fire 1.png", 1)
     fire_icon_1.center_x = 100
     fire_icon_1.center_y = 650
@@ -164,6 +170,11 @@ def setup_upgrade_menu():
     active_water_icon_2.center_x = 200
     active_water_icon_2.center_y = 350
     upgrade_menu.active_water2.append(active_water_icon_2)
+
+    fire1_details_icon = arcade.Sprite("images/menu icons/fire1_details.png")
+    fire1_details_icon.center_x = 325
+    fire1_details_icon.center_y = 575
+    upgrade_menu.fire1_details.append(fire1_details_icon)
 
     return upgrade_menu
 
@@ -297,6 +308,8 @@ class MyGame(arcade.Window):
         self.plasma2_purchased = False
         self.water1_purchased = False
         self.water2_purchased = False
+
+        self.fire1_details_open = False
 
         self.menus = None
         self.upgrade_menus = None
@@ -480,6 +493,9 @@ class MyGame(arcade.Window):
             if self.water2_purchased:
                 self.upgrade_menus[0].active_water2.draw()
 
+            if self.fire1_details_open:
+                self.upgrade_menus[0].fire1_details.draw()
+
         self.gui_list.draw()
 
     def update(self, delta_time):
@@ -488,7 +504,6 @@ class MyGame(arcade.Window):
                 Normally, you'll call update() on the sprite lists that
                 need it.
                 """
-
         if not self.main_menu_open and not self.difficulty_menu_open:
             # update sprite lists
             self.spell_list.update()
@@ -499,9 +514,6 @@ class MyGame(arcade.Window):
             self.enem_list.update()
             self.enem_shambler_list.update()
             self.upgrade_icons.update()
-
-            # if self.fire1_active:
-            #     self.upgrade_icons.append(self.active_fire_icon_1)
 
             # logic for spells
             for firefury in self.spell_firefury_list:
@@ -616,13 +628,19 @@ class MyGame(arcade.Window):
                 """
         pass
 
-    def on_mouse_motion(self, x, y, delta_x, delta_y):
+    def on_mouse_motion(self, x, y, delta_x, delta_y, ):
         """
                 Called whenever the mouse moves.
                 """
         # Move the center of the player sprite to match the mouse x, y
         self.cursor_sprite.center_x = x
         self.cursor_sprite.center_y = y
+
+        if self.upgrade_menu_open:
+            if 125 > x > 75 and 675 > y > 625:
+                self.fire1_details_open = True
+            else:
+                self.fire1_details_open = False
 
     def on_mouse_press(self, x, y, button, key_modifiers):
         """
