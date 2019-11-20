@@ -46,6 +46,7 @@ def setup_menu_1():
     # Appending main menu sprites to lists
     menu.menu_list1 = arcade.SpriteList()
     menu.menu_list2 = arcade.SpriteList()
+    menu.menu_list3 = arcade.SpriteList()
     menu.menu_background = arcade.SpriteList()
 
     back_drop = arcade.Sprite("images/menu icons/MenuBackdrop.png", 1)
@@ -202,6 +203,7 @@ class MyGame(arcade.Window):
         self.spell_lightning_list = None
         self.enem_list = None
         self.enem_shambler_list = None
+        self.enem_bruiser_list = None
         self.base_list = None
         self.gui_list = None
         self.cursor_sprite = None
@@ -220,9 +222,6 @@ class MyGame(arcade.Window):
 
         self.tree = None
 
-        # set up score and 'money' variables
-        self.score_earned = 0
-        self.score_current = 0
 
         # base variables
         self.health_value = 100
@@ -266,13 +265,16 @@ class MyGame(arcade.Window):
 
         self.enem_list = arcade.SpriteList()
         self.enem_shambler_list = arcade.SpriteList()
+        self.enem_bruiser_list = arcade.SpriteList()
         self.base_list = arcade.SpriteList()
         self.gui_list = arcade.SpriteList()
 
         # number of shamblers to spawn on this setup
-        self.enem_pool_shambler = 20
+        self.enem_pool_shambler = 10
+        self.enem_pool_bruiser = 3
         # the starting timing gap between spawning them for this setup
         self.enem_gap_shambler = 120
+        self.enem_gap_bruiser = 300
 
         self.cursor_sprite = arcade.Sprite("images/cursor/cursor1.png", CHARACTER_SCALING)
         self.cursor_sprite.center_x = 100
@@ -335,6 +337,7 @@ class MyGame(arcade.Window):
         self.base_list.draw()
         self.enem_list.draw()
         self.enem_shambler_list.draw()
+        self.enem_bruiser_list.draw()
 
         # draw health bar
 
@@ -371,6 +374,7 @@ class MyGame(arcade.Window):
             self.gui_list.update()
             self.enem_list.update()
             self.enem_shambler_list.update()
+            self.enem_bruiser_list.update()
 
             # logic for spells
             for firefury in self.spell_firefury_list:
@@ -429,6 +433,59 @@ class MyGame(arcade.Window):
 
                 # manage the attack timing counter
                 shambler.attack_timer -= 1
+                
+
+                
+
+                for bruiser in self.enem_bruiser_list:
+                    
+                    if bruiser.bottom > self.width or bruiser.top < 0 or bruiser.right < 0:
+                        print(bruiser.health)
+                        bruiser.kill()
+                        print("bruiser deleted")
+                    
+                # if the unit runs out of health, kill it
+                    if bruiser.health < 0:
+                        bruiser.kill()
+                        self.score += 3
+                        print("bruiser DESTROYED")
+
+                    if bruiser.center_x < 700:
+                        bruiser.change_x = 0
+
+                    if bruiser.attack_timer <= 0 and bruiser.change_x == 0:
+                        self.health_value -= 5
+                        bruiser.attack_timer = 120
+
+                    bruiser_fire_hit_list = arcade.check_for_collision_with_list(bruiser, self.spell_firefury_list)
+                    bruiser_water_hit_list = arcade.check_for_collision_with_list(bruiser, self.spell_waterblast_list)
+                    bruiser_lightning_hit_list = arcade.check_for_collision_with_list(bruiser, self.spell_lightning_list)
+                        
+                    # Make hit lists
+                    bruiser_fire_hit_list = arcade.check_for_collision_with_list(bruiser, self.spell_firefury_list)
+                    bruiser_water_hit_list = arcade.check_for_collision_with_list(bruiser, self.spell_waterblast_list)
+                    bruiser_lightning_hit_list = arcade.check_for_collision_with_list(bruiser, self.spell_lightning_list)
+
+                    if len(bruiser_fire_hit_list) > 0:
+                        bruiser.health -= self.firefury_damage
+
+                    for firefury in bruiser_fire_hit_list:
+                        firefury.remove_from_sprite_lists()
+
+                    if len(bruiser_water_hit_list) > 0:
+                        bruiser.health -= self.waterblast_damage
+
+                    for waterblast in bruiser_water_hit_list:
+                        waterblast.remove_from_sprite_lists()
+
+                    if len(bruiser_lightning_hit_list) > 0:
+                        bruiser.health -= self.lightning_damage
+
+                    for lightning in bruiser_lightning_hit_list:
+                        lightning.remove_from_sprite_lists()
+
+                    # manage the attack timing counter
+                    bruiser.attack_timer -= 1
 
             # update magic resource bar
 
@@ -448,8 +505,20 @@ class MyGame(arcade.Window):
                 self.enem_pool_shambler -= 1
                 self.enem_gap_shambler = random.randint(30, 180)
 
+            if self.enem_pool_bruiser > 0 and self.enem_gap_bruiser < 0:
+                    bruiser = arcade.Sprite("images/enemies/enemy_bruiser.png")
+                    bruiser.center_x = 1800
+                    bruiser.center_y = random.randint(50, 300)
+                    bruiser.change_x = random.randint(-4, -1)
+                    bruiser.health = random.randint(10, 50)
+                    bruiser.attack_timer = 90
+                    self.enem_bruiser_list.append(bruiser)
+                    self.enem_pool_bruiser -= 1
+                    self.enem_gap_bruiser = random.randint(30, 180)
+
             # code for handling timing variables.
             self.enem_gap_shambler -= 1
+            self.enem_gap_bruiser -= 1
 
             # lose game condition
 
