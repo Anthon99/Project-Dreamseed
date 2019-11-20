@@ -252,6 +252,9 @@ class MyGame(arcade.Window):
         self.SpellChange = arcade.load_sound("sounds/SpellChange.wav")
 
         self.set_mouse_visible(False)
+        
+        #score
+        self.score = 0
 
     def setup(self):
         # Create your sprites and sprite lists here
@@ -286,6 +289,9 @@ class MyGame(arcade.Window):
         wall.center_x = 600
         wall.center_y = 200
         self.base_list.append(wall)
+        
+        #score
+        self.score = 0
 
         # Declaring menu array and appending Menu object to it.
         self.menus = []
@@ -305,6 +311,10 @@ class MyGame(arcade.Window):
                                           arcade.color.SKY_BLUE)
         # Draw the ground in the bottom third
         arcade.draw_lrtb_rectangle_filled(0, SCREEN_WIDTH, SCREEN_HEIGHT / 3, 0, arcade.color.DARK_SPRING_GREEN)
+        
+        #Draw score
+        output = f"Score: {self.score}"
+        arcade.draw_text(output, 10, 20, arcade.color.WHITE, 14)
 
         # Draw magic bar
         for magic in self.magic_list:
@@ -385,6 +395,7 @@ class MyGame(arcade.Window):
                 # if the unit runs out of health, kill it
                 if shambler.health < 0:
                     shambler.kill()
+                    self.score += 1
                     print("Shambler DESTROYED")
 
                 if shambler.center_x < 700:
